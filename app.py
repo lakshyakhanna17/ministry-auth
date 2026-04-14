@@ -79,9 +79,10 @@ def generate_token():
     payload = {
         "user": "harry",
         "role": "cruxbreaker",
-        "hint": "fragment_2"
+        "hint": FRAG_2  # Changed from "fragment_2" to the actual variable
     }
     token = jwt.encode(payload, PRIVATE_KEY, algorithm="RS256")
+    # Handling potential byte/string return depending on PyJWT version
     if isinstance(token, bytes):
         token = token.decode("utf-8")
     return token
