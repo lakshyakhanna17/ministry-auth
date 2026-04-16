@@ -153,6 +153,18 @@ def vault():
     else:
         return "Access denied", 403
 
+@app.route("/reveal_secret")
+def reveal():
+    # This will show us the EXACT length and hex of the secret the server is using
+    import binascii
+    secret_bytes = PUBLIC_KEY.encode('utf-8')
+    return jsonify({
+        "length": len(PUBLIC_KEY),
+        "hex": binascii.hexlify(secret_bytes).decode(),
+        "first_10": PUBLIC_KEY[:10],
+        "last_10": PUBLIC_KEY[-10:]
+    })
+
 # =========================
 # 🚀 RUN
 # =========================
