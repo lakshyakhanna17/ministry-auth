@@ -95,13 +95,12 @@ def verify_token(token):
         header = jwt.get_unverified_header(token)
         alg = header.get("alg")
         if alg == "HS256":
-            return jwt.decode(token, PUBLIC_KEY, algorithms=["HS256"])
+            return jwt.decode(token, PUBLIC_KEY.encode(), algorithms=["HS256"])
         else:
             return jwt.decode(token, PUBLIC_KEY, algorithms=["RS256"])
     except jwt.PyJWTError as e:
         print(f"JWT error: {e}")
         return None
-
 # =========================
 # 🏠 ROOT ENDPOINT
 # =========================
