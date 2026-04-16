@@ -110,7 +110,8 @@ def home():
     token = generate_token()
     resp = make_response(jsonify({
         "token": token,
-        "note": "The Ministry trusts what tokens claim..."
+        "note": "The Ministry trusts what tokens claim...
+         even those carried by /owl.log ......."
     }))
     resp.headers["X-Ministry-Trace"] = FRAG_1
     return resp
