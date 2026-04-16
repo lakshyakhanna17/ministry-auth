@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify, make_response
 import jwt
 import gzip
+import hashlib
+import hmac
 import base64
 import binascii
 
@@ -92,13 +94,29 @@ def generate_token():
 # =========================
 def verify_token(token):
     try:
-        header = jwt.get_unverified_header(token)
-        alg = header.get("alg")
+        parts = token.split('.')
+        if len(parts) != 3:
+            return None
+        
+        header_b64, payload_b64, sig_b64 = parts
+        alg = jwt.get_unverified_header(token).get("alg")
+        
         if alg == "HS256":
-            return jwt.decode(token, PUBLIC_KEY.encode(), algorithms=["HS256"])
+            signing_input = f"{header_b64}.{payload_b64}".encode()
+            secret = PUBLIC_KEY.encode()
+            expected_sig = base64.urlsafe_b64encode(
+                hmac.new(secret, signing_input, hashlib.sha256).digest()
+            ).rstrip(b'=').decode()
+            
+            if hmac.compare_digest(expected_sig, sig_b64):
+                import json
+                padding = 4 - len(payload_b64) % 4
+                payload_json = base64.urlsafe_b64decode(payload_b64 + '=' * padding)
+                return json.loads(payload_json)
+            return None
         else:
             return jwt.decode(token, PUBLIC_KEY, algorithms=["RS256"])
-    except jwt.PyJWTError as e:
+    except Exception as e:
         print(f"JWT error: {e}")
         return None
 # =========================
