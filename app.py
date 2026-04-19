@@ -81,6 +81,7 @@ def generate_token():
     payload = {
         "user": "harry",
         "role": "cruxbreaker",
+        "role might be needed": "phoenix.elevated.sigil",
         "hint": FRAG_2  # Changed from "fragment_2" to the actual variable
     }
     token = jwt.encode(payload, PRIVATE_KEY, algorithm="RS256")
